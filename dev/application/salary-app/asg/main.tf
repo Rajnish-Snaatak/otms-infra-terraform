@@ -21,6 +21,7 @@ resource "aws_autoscaling_group" "salary_api" {
   health_check_type         = "ELB"
   health_check_grace_period = 300
 
+  
   tag {
     key                 = "Name"
     value               = "${var.app_name}"
@@ -36,6 +37,18 @@ resource "aws_autoscaling_group" "salary_api" {
   tag {
     key                 = "Environment"
     value               = "dev"
+    propagate_at_launch = true
+  }
+
+  tag {
+    key                 = "CostCenter"
+    value               = "OTMS-Platform"
+    propagate_at_launch = true
+  }
+
+  tag {
+    key                 = "Owner"
+    value               = "DevOps-Team"
     propagate_at_launch = true
   }
 

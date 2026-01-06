@@ -1,5 +1,5 @@
 resource "aws_launch_template" "salary_api" {
-  name_prefix   = "${var.app_name}-lt-"
+  name_prefix   = "Dev-${var.app_name}-lt-"
   image_id      = var.ami_id
   instance_type = var.instance_type
   key_name      = var.key_name
@@ -15,9 +15,11 @@ resource "aws_launch_template" "salary_api" {
   tag_specifications {
     resource_type = "instance"
     tags = {
-      Name        = "${var.app_name}-instance"
-      Application = var.app_name
-      Environment = "dev"
+	Name        = "${var.app_name}"
+   	Application = var.app_name
+    	Environment = "dev"
+    	CostCenter  = "OTMS-Platform"
+    	Owner       = "DevOps-Team"
     }
   }
 

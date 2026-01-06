@@ -1,5 +1,5 @@
 resource "aws_lb_target_group" "salary_api" {
-  name        = "${var.app_name}-tg"
+  name        = "Dev-${var.app_name}-tg"
   port        = var.app_port
   protocol    = "HTTP"
   vpc_id     = data.terraform_remote_state.vpc.outputs.vpc_id
