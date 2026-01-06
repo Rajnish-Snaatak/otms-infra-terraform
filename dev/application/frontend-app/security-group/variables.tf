@@ -1,0 +1,25 @@
+variable "environment" {
+  description = "Deployment environment"
+  type        = string
+}
+
+variable "application" {
+  description = "Application name"
+  type        = string
+}
+
+variable "owner" {
+  description = "Owner of the resource"
+  type        = string
+}
+
+variable "cost_center" {
+  description = "Cost center for billing"
+  type        = string
+}
+
+variable "region" {
+  description = "AWS region"
+  type        = string
+  default     = "us-east-1"
+}
