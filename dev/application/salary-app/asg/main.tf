@@ -1,5 +1,5 @@
 resource "aws_autoscaling_group" "salary_api" {
-  name = "Dev-${var.app_name}-asg"
+  name = "${var.app_name}-asg"
 
   min_size         = var.min_size
   max_size         = var.max_size
