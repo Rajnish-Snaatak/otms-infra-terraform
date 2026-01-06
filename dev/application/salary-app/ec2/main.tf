@@ -8,6 +8,7 @@ resource "aws_instance" "salary_api" {
   key_name = var.key_name
 
   tags = {
+    Name        = "${var.app_name}"
     Application = var.app_name
     Environment = "dev"
     CostCenter  = "OTMS-Platform"
