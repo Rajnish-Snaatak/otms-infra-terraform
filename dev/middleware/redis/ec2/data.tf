@@ -3,16 +3,15 @@ data "terraform_remote_state" "subnets" {
   config = {
     bucket = "dev-otms-terraform-state"
     key    = "dev/network/subnets/terraform.tfstate"
-    region = var.aws_region
+    region = "us-east-1"
   }
 }
 
-
-data "terraform_remote_state" "sg" {
+data "terraform_remote_state" "redis_sg" {
   backend = "s3"
   config = {
     bucket = "dev-otms-terraform-state"
-    key    = "dev/application/notification-worker/security-group/terraform.tfstate"
-    region = var.aws_region
+    key    = "dev/middleware/redis/security-group/terraform.tfstate"
+    region = "us-east-1"
   }
 }

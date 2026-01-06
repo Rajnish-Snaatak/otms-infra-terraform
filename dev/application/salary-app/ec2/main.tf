@@ -8,8 +8,9 @@ resource "aws_instance" "salary_api" {
   key_name = var.key_name
 
   tags = {
-    Name        = "${var.app_name}-ec2"
     Application = var.app_name
     Environment = "dev"
+    CostCenter  = "OTMS-Platform"
+    Owner       = "DevOps-Team"
   }
 }

@@ -3,12 +3,27 @@ variable "aws_region" {
   default = "us-east-1"
 }
 
-variable "ami_id" {
-  type        = string
-  description = "AMI ID for Notification Worker EC2"
+variable "environment" {
+  type = string
+}
+
+variable "application" {
+  type = string
+}
+
+variable "owner" {
+  type = string
+}
+
+variable "cost_center" {
+  type = string
 }
 
 variable "instance_type" {
+  type = string
+}
+
+variable "ami_id" {
   type = string
 }
 
@@ -16,6 +31,6 @@ variable "key_name" {
   type = string
 }
 
-variable "app_name" {
+variable "security_group_id" {
   type = string
 }
