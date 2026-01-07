@@ -9,6 +9,8 @@ resource "aws_instance" "postgres" {
 
   key_name = var.key_name
 
+  iam_instance_profile = data.terraform_remote_state.iam_global.outputs.instance_profile_name
+
  
 
   tags = {

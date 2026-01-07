@@ -1,7 +1,5 @@
-############################################################
-# Fetch network outputs dynamically
-############################################################
-data "terraform_remote_state" "network" {
+# VPC remote state
+data "terraform_remote_state" "vpc" {
   backend = "s3"
   config = {
     bucket = "dev-otms-terraform-state"
@@ -10,63 +8,54 @@ data "terraform_remote_state" "network" {
   }
 }
 
-############################################################
-# Fetch Postgres Security Group from remote state
-############################################################
+# Subnets remote state
+data "terraform_remote_state" "subnets" {
+  backend = "s3"
+  config = {
+    bucket = "dev-otms-terraform-state"
+    key    = "dev/network/subnets/terraform.tfstate"
+    region = "us-east-1"
+  }
+}
+
+
+data "terraform_remote_state" "iam_global" {
+   backend = "s3"
+   config = {
+	 bucket = "dev-otms-terraform-state"
+	 key = "dev/iam-global/ec2-base-role/terraform.tfstate"
+	 region = "us-east-1"
+   }
+ }
+
+
+# Postgres SG remote state
 data "terraform_remote_state" "postgres_sg" {
   backend = "s3"
   config = {
     bucket = "dev-otms-terraform-state"
-    key    = "dev/db/postgre/sg/terraformstatefile"
+    key    = "dev/db/postgre/sg/terraform.tfstate"
     region = "us-east-1"
   }
 }
 
-############################################################
-# Fetch ALB remote state
-############################################################
-data "terraform_remote_state" "alb" {
-  backend = "s3"
-  config = {
-    bucket = "dev-otms-terraform-state"
-    key    = "dev/network/alb/terraform.tfstate"
-    region = "us-east-1"
-  }
-}
-
-############################################################
-# Fetch Frontend Security Group remote state
-############################################################
-data "terraform_remote_state" "frontend" {
-  backend = "s3"
-  config = {
-    bucket = "dev-otms-terraform-state"
-    key    = "dev/application/frontend/security-group/terraform.tfstate"
-    region = "us-east-1"
-  }
-}
-
-############################################################
-# Subnets from network remote state
-############################################################
+# Subnets
 data "aws_subnet" "database" {
-  id = data.terraform_remote_state.network.outputs.database_subnet
+  id = data.terraform_remote_state.subnets.outputs.database_subnet
 }
 
 data "aws_subnet" "public_1" {
-  id = data.terraform_remote_state.network.outputs.public_subnets[0]
+  id = data.terraform_remote_state.subnets.outputs.public_subnets[0]
 }
 
 data "aws_subnet" "public_2" {
-  id = data.terraform_remote_state.network.outputs.public_subnets[1]
+  id = data.terraform_remote_state.subnets.outputs.public_subnets[1]
 }
 
-############################################################
 # Latest Ubuntu 22.04 LTS AMI
-############################################################
 data "aws_ami" "ubuntu" {
   most_recent = true
-  owners      = ["099720109477"] # Canonical account
+  owners      = ["099720109477"]
 
   filter {
     name   = "name"
