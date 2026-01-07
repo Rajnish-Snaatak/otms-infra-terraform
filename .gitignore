@@ -12,3 +12,8 @@
 # OS / Editor
 .DS_Store
 *.log
+
+# Vim swap files
+*.swp
+*.swo
+*.swn
