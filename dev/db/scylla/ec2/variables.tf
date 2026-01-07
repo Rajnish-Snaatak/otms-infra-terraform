@@ -15,12 +15,13 @@ variable "app_name" {
   type        = string
 }
 
+variable "key_name" {
+  description = "SSH key name"
+  type        = string
+}
+
 variable "environment" {
   description = "Environment name"
   type        = string
   default     = "Dev"
-}
-
-variable "postgres_key_name" {
-  type = string
 }

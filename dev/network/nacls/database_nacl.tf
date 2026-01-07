@@ -1,9 +1,11 @@
 resource "aws_network_acl" "database_nacl" {
   vpc_id     = data.terraform_remote_state.vpc.outputs.vpc_id
-  subnet_ids = [data.terraform_remote_state.subnets.outputs.database_subnet]
+  subnet_ids = [
+    data.terraform_remote_state.subnets.outputs.database_subnet
+  ]
 
   # --------------------------------------------------
-  # SSH from Bastion (Public Subnet 1)
+  # SSH from Bastion (Public Subnet)
   # --------------------------------------------------
   ingress {
     rule_no    = 50
@@ -11,6 +13,18 @@ resource "aws_network_acl" "database_nacl" {
     from_port  = 22
     to_port    = 22
     cidr_block = "10.0.0.0/24"
+    action     = "allow"
+  }
+
+  # --------------------------------------------------
+  # SSM Endpoint → Database (HTTPS)
+  # --------------------------------------------------
+  ingress {
+    rule_no    = 60
+    protocol   = "tcp"
+    from_port  = 443
+    to_port    = 443
+    cidr_block = data.terraform_remote_state.vpc.outputs.vpc_cidr
     action     = "allow"
   }
 
@@ -39,14 +53,38 @@ resource "aws_network_acl" "database_nacl" {
   }
 
   # --------------------------------------------------
-  # Ephemeral return traffic to Backend
+  # Ephemeral return traffic (responses)
   # --------------------------------------------------
   ingress {
     rule_no    = 200
     protocol   = "tcp"
     from_port  = 1024
     to_port    = 65535
-    cidr_block = "10.0.8.0/22"
+    cidr_block = data.terraform_remote_state.vpc.outputs.vpc_cidr
+    action     = "allow"
+  }
+
+  # --------------------------------------------------
+  # Database → SSM Endpoint (HTTPS)
+  # --------------------------------------------------
+  egress {
+    rule_no    = 60
+    protocol   = "tcp"
+    from_port  = 443
+    to_port    = 443
+    cidr_block = data.terraform_remote_state.vpc.outputs.vpc_cidr
+    action     = "allow"
+  }
+
+  # --------------------------------------------------
+  # Database → SSM Endpoint (ephemeral return traffic) ✅ FIX
+  # --------------------------------------------------
+  egress {
+    rule_no    = 70
+    protocol   = "tcp"
+    from_port  = 1024
+    to_port    = 65535
+    cidr_block = data.terraform_remote_state.vpc.outputs.vpc_cidr
     action     = "allow"
   }
 

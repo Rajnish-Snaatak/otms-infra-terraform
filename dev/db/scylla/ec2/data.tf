@@ -44,8 +44,6 @@ data "aws_subnet" "database" {
   id = data.terraform_remote_state.subnets.outputs.database_subnet
 }
 
-
-
 data "aws_subnet" "public_1" {
   id = data.terraform_remote_state.subnets.outputs.public_subnets[0]
 }
