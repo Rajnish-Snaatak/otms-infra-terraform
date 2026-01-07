@@ -1,0 +1,21 @@
+resource "aws_instance" "postgres" {
+  count         = var.instance_count
+  ami           = data.aws_ami.ubuntu.id
+  instance_type = var.instance_type
+  subnet_id     = data.aws_subnet.database.id
+  vpc_security_group_ids = [
+    data.terraform_remote_state.postgres_sg.outputs.postgres_sg_id
+  ]
+
+  key_name = var.key_name
+
+ 
+
+  tags = {
+    Name        = var.app_name
+    Application = var.app_name
+    Environment = "dev"
+    CostCenter  = "OTMS-Platform"
+    Owner       = "DevOps-Team"
+  }
+}
