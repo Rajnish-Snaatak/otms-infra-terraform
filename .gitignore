@@ -4,11 +4,6 @@
 *.tfstate.*
 .terraform.lock.hcl
 
-# Variables & secrets
-*.tfvars
-*.pem
-*.key
-
 # OS / Editor
 .DS_Store
 *.log

@@ -1,0 +1,6 @@
+region        = "us-east-1"
+environment   = "dev"
+application   = "bastion-host"
+owner         = "devops"
+cost_center   = "platform"
+allowed_ssh_cidr = "0.0.0.0/0"

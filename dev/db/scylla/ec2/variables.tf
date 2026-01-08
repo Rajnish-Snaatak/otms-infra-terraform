@@ -1,7 +1,12 @@
 variable "instance_type" {
   description = "EC2 instance type"
   type        = string
-  default     = "t3.medium"
+  default     = "t3.xlarge"
+}
+
+variable "ami_id" {
+  description = "Golden AMI ID for EC2 / Launch Template"
+  type        = string
 }
 
 variable "instance_count" {
@@ -25,3 +30,4 @@ variable "environment" {
   type        = string
   default     = "Dev"
 }
+

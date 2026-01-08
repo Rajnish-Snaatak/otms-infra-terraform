@@ -3,6 +3,11 @@ variable "instance_type" {
   default = "t3.medium"
 }
 
+variable "ami_id" {
+ type    = string
+ description = "Golden AMI ID"
+}
+
 variable "instance_count" {
   type    = number
   default = 1

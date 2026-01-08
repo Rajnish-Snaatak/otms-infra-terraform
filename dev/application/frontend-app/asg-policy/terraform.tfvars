@@ -1,0 +1,8 @@
+environment = "dev"
+application = "frontend"
+owner       = "otms-devops"
+cost_center = "cc-frontend"
+
+region = "us-east-1"
+
+cpu_target_value = 60

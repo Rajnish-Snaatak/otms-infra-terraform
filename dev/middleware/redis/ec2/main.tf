@@ -1,6 +1,6 @@
 resource "aws_instance" "redis" {
   count         = var.instance_count
-  ami           = data.aws_ami.ubuntu.id
+  ami           = var.ami_id
   instance_type = var.instance_type
 
   subnet_id = data.terraform_remote_state.subnets.outputs.database_subnet
