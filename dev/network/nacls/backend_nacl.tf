@@ -1,9 +1,11 @@
 resource "aws_network_acl" "backend_nacl" {
   vpc_id     = data.terraform_remote_state.vpc.outputs.vpc_id
-  subnet_ids = [data.terraform_remote_state.subnets.outputs.backend_subnet]
+  subnet_ids = [
+    data.terraform_remote_state.subnets.outputs.backend_subnet
+  ]
 
   # --------------------------------------------------
-  # SSH from Bastion (Public Subnet 1)
+  # SSH from Bastion (Public Subnet)
   # --------------------------------------------------
   ingress {
     rule_no    = 50
@@ -11,6 +13,18 @@ resource "aws_network_acl" "backend_nacl" {
     from_port  = 22
     to_port    = 22
     cidr_block = "10.0.0.0/24"
+    action     = "allow"
+  }
+
+  # --------------------------------------------------
+  # SSM / Internal HTTPS (from VPC)  ✅ ADD
+  # --------------------------------------------------
+  ingress {
+    rule_no    = 60
+    protocol   = "tcp"
+    from_port  = 443
+    to_port    = 443
+    cidr_block = data.terraform_remote_state.vpc.outputs.vpc_cidr
     action     = "allow"
   }
 
@@ -27,7 +41,7 @@ resource "aws_network_acl" "backend_nacl" {
   }
 
   # --------------------------------------------------
-  # Frontend → Backend (Notification / Flask on 5000)
+  # Frontend → Backend (Flask / Notifications 5000)
   # --------------------------------------------------
   ingress {
     rule_no    = 110
@@ -39,14 +53,38 @@ resource "aws_network_acl" "backend_nacl" {
   }
 
   # --------------------------------------------------
-  # Ephemeral ports (return traffic to frontend)
+  # Ephemeral inbound (return traffic)  ✅ UPDATED
   # --------------------------------------------------
   ingress {
     rule_no    = 200
     protocol   = "tcp"
     from_port  = 1024
     to_port    = 65535
-    cidr_block = "10.0.14.0/23"
+    cidr_block = data.terraform_remote_state.vpc.outputs.vpc_cidr
+    action     = "allow"
+  }
+
+  # --------------------------------------------------
+  # Backend → SSM Endpoint (HTTPS)  ✅ ADD
+  # --------------------------------------------------
+  egress {
+    rule_no    = 60
+    protocol   = "tcp"
+    from_port  = 443
+    to_port    = 443
+    cidr_block = data.terraform_remote_state.vpc.outputs.vpc_cidr
+    action     = "allow"
+  }
+
+  # --------------------------------------------------
+  # Backend → SSM Endpoint (ephemeral return)  ✅ ADD
+  # --------------------------------------------------
+  egress {
+    rule_no    = 70
+    protocol   = "tcp"
+    from_port  = 1024
+    to_port    = 65535
+    cidr_block = data.terraform_remote_state.vpc.outputs.vpc_cidr
     action     = "allow"
   }
 
@@ -75,7 +113,7 @@ resource "aws_network_acl" "backend_nacl" {
   }
 
   # --------------------------------------------------
-  # SSH response traffic back to Bastion
+  # SSH response back to Bastion
   # --------------------------------------------------
   egress {
     rule_no    = 200

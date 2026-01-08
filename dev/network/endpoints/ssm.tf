@@ -9,9 +9,10 @@ resource "aws_security_group" "ssm_endpoints_sg" {
    from_port       = 443
    to_port         = 443
    protocol        = "tcp"
-   security_groups = [
-     data.terraform_remote_state.db.outputs.postgres_sg_id
-   ]
+ security_groups = [
+      data.terraform_remote_state.db.outputs.postgres_sg_id,
+      data.terraform_remote_state.salary_sg.outputs.sg_id
+    ]
  }
 
   egress {

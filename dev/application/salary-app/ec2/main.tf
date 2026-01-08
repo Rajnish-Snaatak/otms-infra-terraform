@@ -7,6 +7,8 @@ resource "aws_instance" "salary_api" {
   ]
   key_name = var.key_name
 
+  iam_instance_profile = data.terraform_remote_state.iam_global.outputs.instance_profile_name
+
   tags = {
     Name        = "${var.app_name}"
     Application = var.app_name

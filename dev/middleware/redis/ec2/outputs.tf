@@ -1,3 +1,8 @@
-output "redis_private_ip" {
-  value = aws_instance.redis.private_ip
+output "redis_instance_ids" {
+  value = aws_instance.redis[*].id
 }
+
+output "redis_private_ips" {
+  value = aws_instance.redis[*].private_ip
+}
+

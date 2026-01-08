@@ -8,16 +8,18 @@ resource "aws_launch_template" "attendance_api" {
     data.terraform_remote_state.attendance_sg.outputs.sg_id
   ]
 
- iam_instance_profile {
-  name = data.terraform_remote_state.iam_global.outputs.instance_profile_name
- }
+  iam_instance_profile {
+    name = data.terraform_remote_state.iam_global.outputs.instance_profile_name
+  }
 
   tag_specifications {
     resource_type = "instance"
     tags = {
-      Name        = "${var.app_name}-instance"
+      Name        = var.app_name
       Application = var.app_name
       Environment = "dev"
+      CostCenter  = "OTMS-Platform"
+      Owner       = "DevOps-Team"
     }
   }
 
@@ -25,3 +27,4 @@ resource "aws_launch_template" "attendance_api" {
     create_before_destroy = true
   }
 }
+

@@ -1,10 +1,9 @@
 terraform {
   backend "s3" {
     bucket         = "dev-otms-terraform-state"
-    key            = "env/dev/middleware/redis/ec2/terraform.tfstate"
+    key            = "dev/middleware/redis/sg/terraform.tfstate"
     region         = "us-east-1"
     dynamodb_table = "dev-otms-terraform-locks"
     encrypt        = true
   }
 }
-
