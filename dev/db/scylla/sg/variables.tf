@@ -1,6 +1,6 @@
 variable "app_name" {
   type    = string
-  default = "postgres"
+  default = "scylla"
 }
 
 variable "aws_region" {

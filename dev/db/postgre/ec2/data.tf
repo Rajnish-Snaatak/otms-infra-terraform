@@ -54,18 +54,12 @@ data "aws_subnet" "public_2" {
   id = data.terraform_remote_state.subnets.outputs.public_subnets[1]
 }
 
-# Latest Ubuntu 22.04 LTS AMI
+# Fixed Ubuntu Golden AMI
 data "aws_ami" "ubuntu" {
-  most_recent = true
-  owners      = ["099720109477"]
+  most_recent = false
 
   filter {
-    name   = "name"
-    values = ["ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*"]
-  }
-
-  filter {
-    name   = "virtualization-type"
-    values = ["hvm"]
+    name   = "image-id"
+    values = ["ami-082f5336188705f7c"]
   }
 }

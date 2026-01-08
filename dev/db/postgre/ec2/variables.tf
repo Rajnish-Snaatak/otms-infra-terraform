@@ -24,3 +24,8 @@ variable "environment" {
 variable "postgres_key_name" {
   type = string
 }
+
+variable "ami_id" {
+  description = "Golden AMI ID for EC2 instances"
+  type        = string
+}

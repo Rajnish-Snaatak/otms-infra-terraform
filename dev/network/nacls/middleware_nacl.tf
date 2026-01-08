@@ -1,9 +1,11 @@
 resource "aws_network_acl" "middleware_nacl" {
   vpc_id     = data.terraform_remote_state.vpc.outputs.vpc_id
-  subnet_ids = [data.terraform_remote_state.subnets.outputs.middleware_subnet]
+  subnet_ids = [
+    data.terraform_remote_state.subnets.outputs.middleware_subnet
+  ]
 
   # --------------------------------------------------
-  # SSH from Bastion (Public Subnet 1)
+  # SSH from Bastion (optional, for break-glass)
   # --------------------------------------------------
   ingress {
     rule_no    = 50
@@ -27,14 +29,26 @@ resource "aws_network_acl" "middleware_nacl" {
   }
 
   # --------------------------------------------------
-  # Ephemeral return traffic to Backend
+  # Ephemeral ports (SSM + backend responses)
   # --------------------------------------------------
   ingress {
     rule_no    = 200
     protocol   = "tcp"
     from_port  = 1024
     to_port    = 65535
-    cidr_block = "10.0.8.0/22"
+    cidr_block = data.terraform_remote_state.vpc.outputs.vpc_cidr
+    action     = "allow"
+  }
+
+  # --------------------------------------------------
+  # Middleware → SSM VPC Endpoints (HTTPS)
+  # --------------------------------------------------
+  egress {
+    rule_no    = 60
+    protocol   = "tcp"
+    from_port  = 443
+    to_port    = 443
+    cidr_block = data.terraform_remote_state.vpc.outputs.vpc_cidr
     action     = "allow"
   }
 

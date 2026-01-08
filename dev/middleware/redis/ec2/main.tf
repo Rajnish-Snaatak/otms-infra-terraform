@@ -18,5 +18,6 @@ resource "aws_instance" "redis" {
     Environment = "dev"
     CostCenter  = "OTMS-Platform"
     Owner       = "DevOps-Team"
+    Role        = "redis"
   }
 }

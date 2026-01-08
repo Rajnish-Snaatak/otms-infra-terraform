@@ -11,7 +11,9 @@ resource "aws_security_group" "ssm_endpoints_sg" {
    protocol        = "tcp"
  security_groups = [
       data.terraform_remote_state.db.outputs.postgres_sg_id,
-      data.terraform_remote_state.salary_sg.outputs.sg_id
+      data.terraform_remote_state.salary_sg.outputs.sg_id,
+      data.terraform_remote_state.redis_sg.outputs.redis_sg_id,
+      data.terraform_remote_state.scylla_sg.outputs.scylla_sg_id
     ]
  }
 

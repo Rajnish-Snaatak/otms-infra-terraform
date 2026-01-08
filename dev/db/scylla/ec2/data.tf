@@ -29,12 +29,12 @@ data "terraform_remote_state" "iam_global" {
  }
 
 
-# Postgres SG remote state
-data "terraform_remote_state" "postgres_sg" {
+# scylla SG remote state
+data "terraform_remote_state" "scylla_sg" {
   backend = "s3"
   config = {
     bucket = "dev-otms-terraform-state"
-    key    = "dev/db/postgre/sg/terraform.tfstate"
+    key    = "dev/db/scylla/sg/terraform.tfstate"
     region = "us-east-1"
   }
 }
