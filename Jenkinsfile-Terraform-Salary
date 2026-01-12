@@ -30,15 +30,16 @@ pipeline {
                     script {
                         def modules = [
                             'security-group',
-                            'lt',
+                            'launch-template',
+                            'target-group',
+                            'alb-rule',
                             'asg',
-                            'asg-policy',
-                            'alb-listener-rule'
+                            'asg-policy'
                         ]
 
                         for (module in modules) {
                             stage("Deploy ${module}") {
-                                dir("env/dev/salary/${module}") {
+                                dir("dev/application/salary-app/${module}") {
                                     sh '''
                                         terraform init -reconfigure
                                         terraform validate
