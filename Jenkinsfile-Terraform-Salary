@@ -57,10 +57,10 @@ pipeline {
 
     post {
         success {
-            echo "✔ Terraform Salary Deployment Successful"
+            echo "Terraform Salary Deployment Successful"
         }
         failure {
-            echo "❌ Terraform Salary Deployment Failed"
+            echo " Terraform Salary Deployment Failed"
         }
         always {
             cleanWs()
