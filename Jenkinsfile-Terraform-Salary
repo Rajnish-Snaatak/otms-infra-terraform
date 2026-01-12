@@ -1,52 +1,50 @@
 pipeline {
     agent any
 
+    options {
+        timestamps()          
+        disableConcurrentBuilds()
+    }
+
     environment {
         AWS_DEFAULT_REGION  = "us-east-1"
         TF_IN_AUTOMATION    = "true"
         TF_PLUGIN_CACHE_DIR = "/var/lib/jenkins/.terraform.d/plugin-cache"
     }
 
-    options {
-        disableConcurrentBuilds()
-    }
-
-    timestamps()   // << ✔ FIXED POSITION
-
     stages {
 
         stage('Checkout Terraform Repo') {
             steps {
-                checkout scm
+                echo "Cloning Salary Terraform Repository"
+                git branch: 'main',
+                    url: 'https://github.com/Rajnish-Snaatak/otms-infra-terraform.git'
             }
         }
 
-        stage('Terraform Init & Apply - Salary') {
+        stage('Terraform Init & Apply') {
             steps {
-                withCredentials([
-                    [$class: 'AmazonWebServicesCredentialsBinding',
-                     credentialsId: 'aws-dev-creds']
-                ]) {
-
+                withCredentials([[
+                    $class: 'AmazonWebServicesCredentialsBinding',
+                    credentialsId: 'aws-dev-creds'
+                ]]) {
                     script {
                         def modules = [
-                            'vpc',
                             'security-group',
-                            'subnets',
+                            'lt',
                             'asg',
-                            'alb',
-                            'launch-template'
+                            'asg-policy',
+                            'alb-listener-rule'
                         ]
 
                         for (module in modules) {
                             stage("Deploy ${module}") {
                                 dir("env/dev/salary/${module}") {
-
                                     sh '''
                                         terraform init -reconfigure
                                         terraform validate
-                                        terraform plan -out=tfplan.out
-                                        terraform apply -auto-approve tfplan.out
+                                        terraform plan
+                                        terraform apply -auto-approve
                                     '''
                                 }
                             }
@@ -59,10 +57,10 @@ pipeline {
 
     post {
         success {
-            echo "✅ Salary Terraform deployment successful"
+            echo "✔ Terraform Salary Deployment Successful"
         }
         failure {
-            echo "❌ Salary Terraform deployment failed"
+            echo "❌ Terraform Salary Deployment Failed"
         }
         always {
             cleanWs()
