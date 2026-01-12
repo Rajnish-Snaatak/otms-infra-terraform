@@ -1,0 +1,74 @@
+pipeline {
+    agent any
+
+    environment {
+        AWS_DEFAULT_REGION  = "us-east-1"
+        TF_IN_AUTOMATION    = "true"
+        TF_PLUGIN_CACHE_DIR = "/var/lib/jenkins/.terraform.d/plugin-cache"
+    }
+
+    options {
+        disableConcurrentBuilds()
+        timestamps()
+    }
+
+    stages {
+
+        stage('Checkout Terraform Repo') {
+            steps {
+                echo "Cloning Terraform Repo..."
+                checkout scm
+            }
+        }
+
+        stage('Terraform Deploy Modules') {
+            steps {
+                withCredentials([
+                    [
+                        $class: 'AmazonWebServicesCredentialsBinding',
+                        credentialsId: 'aws-dev-creds'
+                    ]
+                ]) {
+
+                    script {
+
+                        def modules = [
+                            'security-group',
+                            'target-group',
+                            'launch-template',
+                            'asg',
+                            'asg-policy',
+                            'alb-listener-rule'
+                        ]
+
+                        for (module in modules) {
+                            stage("Deploy ${module}") {
+                                dir("env/dev/application/frontend-app/${module}") {
+
+                                    sh '''
+                                        terraform init -reconfigure
+                                        terraform validate
+                                        terraform plan -out=tfplan.out
+                                        terraform apply -auto-approve tfplan.out
+                                    '''
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            echo "✅ Terraform Deployment Successful"
+        }
+        failure {
+            echo "❌ Terraform Deployment Failed!"
+        }
+        always {
+            cleanWs()
+        }
+    }
+}
